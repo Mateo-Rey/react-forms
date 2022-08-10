@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 
 
-export default function Form() {
+export default function Form({setShow}) {
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [validForm, setValidForm] = useState(false)
     const [errorMessage, setErrorMessage] = useState('');
     const [form, setForm] = useState("");
-  
     useEffect(() => {
       if (form?.title?.length > 3 && form?.description?.length > 10) {
       setValidForm(true)
@@ -33,6 +32,7 @@ export default function Form() {
       setValidForm(true)
       setErrorMessage('')
       console.log(data);
+      setShow(false)
       } catch (error) {
         console.error(error)
         setErrorMessage("there was an error submitting your comment" + error.toString())
