@@ -1,16 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [errorMessage, setErrorMessage] = useState();
-  const [title, setTitle] = useState("this is the title");
+  const [validForm, setValidForm] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('');
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("your description");
   const [author, setAuthor] = useState("other");
 
+  useEffect(() => {
+    if (title.length > 3 && description.length > 10) {
+    setValidForm(true)
+    }
+  },[title,description,author])
+
   async function formSubmit(e) {
-    try{
     e.preventDefault();
+
+    if (!validForm) {
+      setErrorMessage('Not a valid form')
+      return;
+    }
+    try{
 
     const comment = {
       title,
@@ -26,9 +38,13 @@ function App() {
       body: JSON.stringify(comment),
     });
     const data = results.json();
+    setFormSubmitted(true)
+    setValidForm(true)
+    setErrorMessage('')
     console.log(data);
     } catch (error) {
       console.error(error)
+      setErrorMessage("there was an error submitting your comment" + error.toString())
     }
   }
 
@@ -68,9 +84,10 @@ function App() {
           <option value="other">Other</option>
         </select>
         <h3>{author}</h3>
-
-        <button>Submit Form</button>
+        {!formSubmitted && <button>Submit Form</button>}
+      {errorMessage &&<h1>There was an error: <br/>{errorMessage}</h1>}
       </form>
+      
     </>
   );
 }
